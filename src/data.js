@@ -29,7 +29,7 @@ export const issues = [
 ]
 
 export const steps = [
-  { title: 'Sign up', desc: '線上報名，一個人就能參加，不用組隊。' },
+  { title: 'Sign up', desc: '線上報名，一個人就能參加，不用組隊。審核完成後寄出通知信。' },
   { title: 'Pre-event', date: '10/23', place: 'ONLINE', desc: '認識議題、開放資料與可用工具。' },
   { title: 'Debug', date: '10/24', place: '競選總部', desc: '黑客松當天，討論解法，動手執行。' },
   { title: 'Demo', desc: '公開展示成果，說明你的解法如何修好台北。' },
@@ -98,7 +98,7 @@ export const terms = [
   },
   {
     title: '個人資料蒐集',
-    body: '報名所填之暱稱、E-mail、戶籍地與關注議題，僅用於本次活動聯繫、議題分組與統計，不作其他用途。未滿 18 歲者，須經法定代理人同意後報名。',
+    body: '報名所填之暱稱、E-mail、戶籍地、關注議題與關鍵字，僅用於本次活動聯繫、議題分組與統計，不作其他用途。未滿 18 歲者，須經法定代理人同意後報名。',
   },
   {
     title: '出席與取消',

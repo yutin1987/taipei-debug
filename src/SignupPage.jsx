@@ -4,7 +4,7 @@ import { districts } from './districts.js'
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
-const initialForm = { nickname: '', email: '', county: '', district: '', issues: [] }
+const initialForm = { nickname: '', email: '', county: '', district: '', issues: [], keywords: ['', '', ''] }
 
 function validate(form) {
   const errors = {}
@@ -13,6 +13,7 @@ function validate(form) {
   if (!form.county) errors.county = '請選擇縣市'
   else if (!form.district) errors.district = '請選擇地區'
   if (form.issues.length === 0) errors.issues = '請至少選擇一個議題'
+  if (form.keywords.some((k) => !k.trim())) errors.keywords = '請填寫三個關鍵字'
   return errors
 }
 
@@ -92,6 +93,7 @@ export default function SignupPage() {
           county: form.county,
           district: form.district,
           issues: form.issues,
+          keywords: form.keywords.map((k) => k.trim()),
         }),
       })
       if (!res.ok) throw new Error(res.statusText)
@@ -106,8 +108,10 @@ export default function SignupPage() {
       <section className="form-page">
         <div className="container form-card form-card--done">
           <p className="kicker">SIGN UP</p>
-          <h1 className="section__title">報名成功！</h1>
-          <p className="section__sub">{form.nickname}，我們 10/23 線上見。行前資訊會寄到 {form.email}。</p>
+          <h1 className="section__title">報名完成！</h1>
+          <p className="section__sub">
+            {form.nickname}，謝謝你的報名。我們會盡快完成審核，並將通知信寄到 <strong>{form.email}</strong>。
+          </p>
           <a href="#top" className="btn">回到活動首頁</a>
         </div>
       </section>
@@ -190,6 +194,20 @@ export default function SignupPage() {
             {errors.issues && <span className="field__error">{errors.issues}</span>}
           </fieldset>
 
+
+          <fieldset className="field">
+            <legend className="field__label">三個關鍵字 <small>（描述你自己或你的專長，例如：前端、資料分析、UX）</small></legend>
+            <div className="field__row field__row--3">
+              {form.keywords.map((k, i) => (
+                <input
+                  key={i} type="text" value={k} maxLength={15} placeholder={`關鍵字 ${i + 1}`}
+                  aria-label={`關鍵字 ${i + 1}`} aria-invalid={!!errors.keywords && !k.trim()}
+                  onChange={(e) => set('keywords', form.keywords.map((x, j) => (j === i ? e.target.value : x)))}
+                />
+              ))}
+            </div>
+            {errors.keywords && <span className="field__error">{errors.keywords}</span>}
+          </fieldset>
 
           <div className="form__actions">
             <button type="button" className="btn btn--outline" onClick={() => setAgreed(false)}>← 回到條款</button>

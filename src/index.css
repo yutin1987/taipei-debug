@@ -243,6 +243,7 @@ a { color: inherit; text-decoration: none; }
 .field__label { padding: 0; font-weight: 700; font-size: 16px; }
 .field__label small { font-weight: 400; color: var(--muted); }
 .field__row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.field__row--3 { grid-template-columns: repeat(3, 1fr); }
 .field input, .field select {
   width: 100%; padding: 12px 14px; border-radius: 10px;
   border: 2px solid #eadfd6; background: var(--paper);
