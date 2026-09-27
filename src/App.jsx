@@ -1,4 +1,6 @@
-import { SIGNUP_URL, LISTEN_URL, VOTE_DATE, comingSoonProjects, issues, steps, rules } from './data.js'
+import { useEffect, useRef, useState } from 'react'
+import { SIGNUP_URL, LISTEN_URL, VOTE_DATE, comingSoonProjects, issues, steps, rules, agenda } from './data.js'
+import SignupPage from './SignupPage.jsx'
 
 function Nav() {
   return (
@@ -10,7 +12,8 @@ function Nav() {
         <a href="#projects">專案</a>
         <a href="#issues">議題</a>
         <a href="#how">參加辦法</a>
-        <a href="#signup" className="btn btn--small">立即報名</a>
+        <a href="#agenda">流程</a>
+        <a href={SIGNUP_URL} className="btn btn--small">立即報名</a>
       </nav>
     </header>
   )
@@ -129,6 +132,50 @@ function HowTo() {
   )
 }
 
+function Agenda() {
+  return (
+    <section className="section section--tint" id="agenda">
+      <div className="container">
+        <p className="kicker">04 / AGENDA</p>
+        <h2 className="section__title">當天活動流程</h2>
+        <p className="section__sub">16:30 起 YouTube Live 對外直播 Demo 與座談。</p>
+        <div className="agenda">
+          {agenda.map((d) => (
+            <article key={d.day} className="day">
+              <header className="day__head">
+                <span className="day__label">{d.day}</span>
+                <h3 className="day__date">{d.date}</h3>
+                <span className="step__place">{d.place}</span>
+              </header>
+              <ol className="timeline">
+                {d.items.map((it) => (
+                  <li key={it.time + it.title} className={it.live ? 'slot slot--live' : 'slot'}>
+                    <time className="slot__time">{it.time}</time>
+                    <div>
+                      <h4 className="slot__title">
+                        {it.title}
+                        {it.live && <span className="live-badge">LIVE</span>}
+                      </h4>
+                      {it.desc && <p className="slot__desc">{it.desc}</p>}
+                      {it.sub && (
+                        <ul className="slot__sub">
+                          {it.sub.map((x) => (
+                            <li key={x.time}><time>{x.time}</time>{x.title}</li>
+                          ))}
+                        </ul>
+                      )}
+                    </div>
+                  </li>
+                ))}
+              </ol>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
 function Signup() {
   return (
     <section className="signup" id="signup">
@@ -144,16 +191,47 @@ function Signup() {
   )
 }
 
+// #/signup 顯示報名頁，其他 hash 視為首頁錨點
+function useHash() {
+  const [hash, setHash] = useState(window.location.hash)
+  useEffect(() => {
+    const onChange = () => setHash(window.location.hash)
+    window.addEventListener('hashchange', onChange)
+    return () => window.removeEventListener('hashchange', onChange)
+  }, [])
+  return hash
+}
+
 export default function App() {
+  const hash = useHash()
+  const isSignup = hash === SIGNUP_URL
+
+  // 切換頁面後直接跳到錨點或頁首；同頁錨點交給瀏覽器平滑捲動
+  const wasSignup = useRef(isSignup)
+  useEffect(() => {
+    if (wasSignup.current === isSignup) return
+    wasSignup.current = isSignup
+    const target = !isSignup && hash.length > 1 && document.getElementById(hash.slice(1))
+    if (target) target.scrollIntoView({ behavior: 'instant' })
+    else window.scrollTo({ top: 0, behavior: 'instant' })
+  }, [hash, isSignup])
+
   return (
     <>
       <Nav />
       <main>
-        <Hero />
-        <ComingSoon />
-        <Issues />
-        <HowTo />
-        <Signup />
+        {isSignup ? (
+          <SignupPage />
+        ) : (
+          <>
+            <Hero />
+            <ComingSoon />
+            <Issues />
+            <HowTo />
+            <Agenda />
+            <Signup />
+          </>
+        )}
       </main>
       <footer className="footer">
         <div className="container">© 2026 市政 Debug 黑客松 · Future, soon.</div>
